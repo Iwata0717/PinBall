@@ -8,8 +8,12 @@ public class FripperController : MonoBehaviour
 
 	//初期の傾き
 	private float defaultAngle = 20;
+
 	//弾いた時の傾き
 	private float flickAngle = -20;
+
+	//押されているかフラグ
+	private bool isDown = false;
 
 	// Use this for initialization
 	void Start()
@@ -46,32 +50,67 @@ public class FripperController : MonoBehaviour
 			SetAngle(this.defaultAngle);
 		}
 
-		//タッチが0でなければ
-		if (Input.touchCount > 0)
+		//左フリッパーを動かす
+		if (tag == "LeftFripperTag")
 		{
-			for (int i = 0; i < Input.touchCount; i++)
+			//カウント用
+			int i = 0;
+
+			for (i = 0; i < Input.touchCount; i++)
 			{
-				if(Input.touches[i].position.x < Screen.width / 2 && tag == "LeftFripperTag")
+				//画面左側をタッチされていたら
+				if (Input.touches[i].position.x < Screen.width / 2)
 				{
-					if (Input.touches[i].phase == TouchPhase.Began)
+					//タッチされていない状態だったら
+					if (!isDown)
 					{
+						isDown = true;
 						SetAngle(this.flickAngle);
 					}
-					else if(Input.touches[i].phase == TouchPhase.Ended)
-					{
-						SetAngle(this.defaultAngle);
-					}
+					break;
 				}
-				else if (Input.touches[i].position.x >= Screen.width / 2 && tag == "RightFripperTag")
+			}
+
+			//画面左側が１つもタッチされていない状態だったら
+			if (i == Input.touchCount)
+			{
+				//タッチされている状態だったら
+				if (isDown)
 				{
-					if (Input.touches[i].phase == TouchPhase.Began)
+					isDown = false;
+					SetAngle(this.defaultAngle);
+				}
+			}
+		}
+
+		//右フリッパーを動かす
+		if (tag == "RightFripperTag")
+		{
+			int i = 0;
+
+			for (i = 0; i < Input.touchCount; i++)
+			{
+				//画面右側をタッチされていたら
+				if (Input.touches[i].position.x >= Screen.width / 2)
+				{
+					//タッチされていない状態だったら
+					if (!isDown)
 					{
+						isDown = true;
 						SetAngle(this.flickAngle);
 					}
-					else if (Input.touches[i].phase == TouchPhase.Ended)
-					{
-						SetAngle(this.defaultAngle);
-					}
+					break;
+				}
+			}
+
+			//画面右側が１つもタッチされていない状態だったら
+			if (i == Input.touchCount)
+			{
+				//タッチされている状態だったら
+				if (isDown)
+				{
+					isDown = false;
+					SetAngle(this.defaultAngle);
 				}
 			}
 		}
